@@ -239,7 +239,10 @@ footer.site a { color: var(--accent); text-decoration: none; }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 600px) {
-  .wrap { padding: 0 20px; }
+  .wrap {
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+  }
 
   /* nav: let it wrap gracefully instead of overflowing */
   .nav { flex-wrap: wrap; gap: 10px 0; padding: 14px 0; }
