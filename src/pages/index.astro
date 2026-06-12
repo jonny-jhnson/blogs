@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => {
+    // Ascending by `order` - the first post added gets order=1 and stays on
+    // top; each new conversion gets max+1 and lands beneath the previous ones.
+    const ao = a.data.order ?? Infinity;
+    const bo = b.data.order ?? Infinity;
+    if (ao !== bo) return ao - bo;
+    return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+  });
+
+const fmtDate = (d) => {
+  const dt = new Date(d);
+  const p = (n) => String(n).padStart(2, '0');
+  return `${dt.getFullYear()}·${p(dt.getMonth() + 1)}·${p(dt.getDate())}`;
+};
+---
+<BaseLayout title={null} description="Windows Internals, Advesarial Tradecraft & Detection, and AI Security.">
+  <section class="wrap hero">
+    <div class="eyebrow">Windows Internals - Advesarial Tradecraft & Detection - AI Security Research</div>
+  </section>
+
+  <section class="wrap feed">
+    {posts.map((post) => (
+      <a class="entry" href={`/blog/${post.data.slug}/`}>
+        <div class="date mono">{fmtDate(post.data.pubDate)}</div>
+        <div>
+          <h2>{post.data.title}</h2>
+          <p class="sum">{post.data.description}</p>
+          <div class="tags">
+            {post.data.tags.map((t) => <span>{t}</span>)}
+          </div>
+        </div>
+      </a>
+    ))}
+  </section>
+</BaseLayout>

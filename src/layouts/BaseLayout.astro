@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+const { title, description } = Astro.props;
+const site = 'Jonathan Johnson';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="generator" content={Astro.generator} />
+  <title>{title ? `${title} — ${site}` : site}</title>
+  <meta name="description" content={description ?? 'Windows internals and detection research.'} />
+  <meta property="og:title" content={title ?? site} />
+  <meta property="og:description" content={description ?? ''} />
+  <meta property="og:type" content="website" />
+  <link rel="alternate" type="application/rss+xml" title={site} href="/rss.xml" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="/">jonny-johnson<span class="dot">.</span>dev</a>
+        <ul class="nav-links">
+          <li><a href="/">Writing</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/rss.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site">
+    <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%;">
+      <span>© {new Date().getFullYear()} Jonathan Johnson</span>
+      <span class="mono">built with Astro · deployed on Cloudflare Pages</span>
+    </div>
+  </footer>
+</body>
+</html>
