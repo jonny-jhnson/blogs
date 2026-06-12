@@ -239,10 +239,31 @@ footer.site a { color: var(--accent); text-decoration: none; }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 600px) {
+  .wrap { padding: 0 20px; }
+
+  /* nav: let it wrap gracefully instead of overflowing */
+  .nav { flex-wrap: wrap; gap: 10px 0; padding: 14px 0; }
+  .nav-links { gap: 8px 16px; flex-wrap: wrap; }
+
+  .hero { padding: 44px 0 32px; }
+
   .entry { grid-template-columns: 1fr; gap: 6px; }
   .entry .date { padding-top: 0; }
+  .entry h2 { font-size: 22px; }
+
+  .article { padding: 40px 0 56px; }
   .article h1 { font-size: 28px; }
   .prose { font-size: 17px; }
+  .prose h2 { font-size: 23px; }
+  .prose h3 { font-size: 19px; }
+
   .post-nav { grid-template-columns: 1fr; }
   .post-nav .is-next { text-align: left; }
+
+  footer.site .wrap { flex-direction: column; gap: 6px; }
 }
+
+/* Keep long words / tokens from overflowing on narrow screens */
+.prose p, .prose li, .prose h1, .prose h2, .prose h3 { overflow-wrap: break-word; }
+.article h1 { overflow-wrap: break-word; }
+.entry h2 { overflow-wrap: break-word; }
