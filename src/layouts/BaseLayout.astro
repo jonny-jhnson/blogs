@@ -16,6 +16,18 @@ const site = 'Jonathan Johnson';
   <meta property="og:description" content={description ?? ''} />
   <meta property="og:type" content="website" />
   <link rel="alternate" type="application/rss+xml" title={site} href="/rss.xml" />
+
+  {/* Set theme BEFORE paint so there is no flash. Light is the default. */}
+  <script is:inline>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        document.documentElement.dataset.theme = (t === 'dark' || t === 'light') ? t : 'light';
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
 </head>
 <body>
   <header class="site">
@@ -25,7 +37,9 @@ const site = 'Jonathan Johnson';
         <ul class="nav-links">
           <li><a href="/">Writing</a></li>
           <li><a href="/about">About</a></li>
+          <li><a href="/tags">Tags</a></li>
           <li><a href="/rss.xml">RSS</a></li>
+          <li><button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme">Dark</button></li>
         </ul>
       </nav>
     </div>
@@ -36,10 +50,30 @@ const site = 'Jonathan Johnson';
   </main>
 
   <footer class="site">
-    <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%;">
+    <div class="wrap">
       <span>© {new Date().getFullYear()} Jonathan Johnson</span>
       <span class="mono">built with Astro · deployed on Cloudflare Pages</span>
     </div>
   </footer>
+
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('theme-toggle');
+      function label() {
+        // Button shows the mode you'll switch TO.
+        var cur = document.documentElement.dataset.theme;
+        if (btn) btn.textContent = cur === 'dark' ? 'Light' : 'Dark';
+      }
+      label();
+      if (btn) {
+        btn.addEventListener('click', function () {
+          var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          document.documentElement.dataset.theme = next;
+          try { localStorage.setItem('theme', next); } catch (e) {}
+          label();
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

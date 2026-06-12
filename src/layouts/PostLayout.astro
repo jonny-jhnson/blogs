@@ -1,22 +1,44 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-const { title, description, pubDate, updatedDate, readingTime, tags } = Astro.props;
-const fmt = (d) => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const { title, description, pubDate, updatedDate, readingTime, tags = [], headings = [] } = Astro.props;
+
+const fmt = (d) =>
+  new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const slugifyTag = (t) => t.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+// Auto TOC: every article, H2 + H3. Astro adds `slug` ids to headings for us.
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 <BaseLayout title={title} description={description}>
   <article class="wrap article">
     <a class="back" href="/">← All writing</a>
     <h1>{title}</h1>
     <div class="ameta">
-      {fmt(pubDate)}{readingTime ? ` — ${readingTime}` : ''}
-      {updatedDate ? ` · updated ${fmt(updatedDate)}` : ''}
+      {fmt(pubDate)}{readingTime ? ` · ${readingTime}` : ''}{updatedDate ? ` · updated ${fmt(updatedDate)}` : ''}
     </div>
+
+    {toc.length > 0 && (
+      <nav class="toc" aria-label="Table of contents">
+        <div class="toc-label">Contents</div>
+        <ul>
+          {toc.map((h) => (
+            <li class={h.depth === 3 ? 'toc-sub' : ''}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
     <div class="prose">
       <slot />
     </div>
-    {tags?.length > 0 && (
-      <div class="tags" style="margin-top:36px;">
-        {tags.map((t) => <span>{t}</span>)}
+
+    {tags.length > 0 && (
+      <div class="tags" style="margin-top:38px;padding-top:26px;border-top:1px solid var(--line);">
+        {tags.map((t) => <a href={`/tags/${slugifyTag(t)}`}>{t}</a>)}
       </div>
     )}
   </article>
