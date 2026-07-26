@@ -13,13 +13,13 @@ order: 0
 ## Agent Trust
 It is no secret that attackers are targeting AI agents to either help them with their campaigns or mask their actions. With [AI agents on the endpoint](https://www.beyondtrust.com/solutions/ai-security) becoming more and more prevalent, the attack surface just continues to grow. Securing that surface starts with asking the same questions we have been asking about any other application for years. Just switch "application" for "agent":
 
-How trusted are these agents?
+**How trusted are these agents?**
 
 That question of trust goes beyond just the access and the privilege given to an agent. When defenders see an agent binary do something, are they just marking it as a false positive? Let's take it a step further: does sufficient logging exist for defenders to tell a story around malicious activity leveraging these agents?
 
 All of these questions I plan on challenging with the research below, because offensive practitioners (red teams and threat actors) treat these questions as opportunity.
 
-In this blog, I will be going over a Codex remote-control feature that allows users to control their Codex endpoint instance from another device (for example, a phone or another computer). This remote design is useful as it allows users to interact with sessions remotely, but it also creates a way for someone to leverage this communication mechanism for command-and-control (C2) without needing a Codex application installed on disk.
+In this blog, I will be going over a [Codex remote-control feature](https://learn.chatgpt.com/docs/remote-connections) that allows users to control their Codex endpoint instance from another device (for example, a phone or another computer). This remote design is useful as it allows users to interact with sessions remotely, but it also creates a way for someone to leverage this communication mechanism for command-and-control (C2) without needing a Codex application installed on disk.
 
 Let's start by understanding this remote feature.
 
@@ -47,7 +47,7 @@ One thing to note: I have not been able to find a way to set up this remote conn
 
 ![Figure 4](/images/wham-bam-thank-you-openai-for-the-c2-infra/image4.png)
 
-So, we can tell that this remote feature "works", but do we actually need the ChatGPT application to be successful in this remote connection? Before we dive into that, let's dive into the backend of how this feature works.
+After some testing, I was able to control Codex sessions on my workstation from my phone. Which is nice right? I can "code" from anywhere....but that begs the question do we actually need the ChatGPT application to be successful in this remote connection? Before we dive into that, let's dive into the backend of how this feature works.
 
 ### How the Remote-Control Protocol Actually Works
 
@@ -57,7 +57,7 @@ This remote feature architecture has three components:
 2. **Controller** - The application (e.g. your phone or other device) that sends requests to the server
 3. **Relay** - OpenAI's infrastructure that bridges the WebSocket connections between controller and server
 
-These components communicate through OpenAI's backend remote-control HTTP and WebSocket APIs. The ChatGPT and Codex applications normally make these calls on the user's behalf. These APIs support enrolling a device (server) and pairing a controller. The remote-control [WHAM protocol](https://github.com/openai/codex/blob/f69f88f8116f541daddada3a056de5772a891f15/codex-rs/app-server-transport/src/transport/remote_control/protocol.rs#L223-L238) (the internal name OpenAI uses for this remote-control system, visible in its API paths) and [enrollment tests](https://github.com/openai/codex/blob/56703600091d25542b60597b85d0e027799ad063/codex-rs/app-server/tests/suite/v2/remote_control.rs#L896) provide some useful examples. Let's dive into performing these operations manually by invoking the backend APIs.
+These components communicate through OpenAI's backend HTTP and WebSocket APIs. The ChatGPT and Codex applications normally make these calls on the user's behalf, but nothing prevents another application from communicating with the endpoints directly. Remote control uses endpoints under both the `wham` and `codex` backend namespaces. Luckily, Codex is open source, so we can examine the [remote-control transport protocol](https://github.com/openai/codex/blob/f69f88f8116f541daddada3a056de5772a891f15/codex-rs/app-server-transport/src/transport/remote_control/protocol.rs#L223-L238) and the [controller enrollment process](https://github.com/openai/codex/blob/56703600091d25542b60597b85d0e027799ad063/codex-rs/app-server/tests/suite/v2/remote_control.rs#L896) ourselves. Let's dive into performing these operations manually.  
 
 This process has changed slightly, as when I first did the research I discovered two helpful abuses of this protocol:
 
@@ -70,7 +70,7 @@ To make this easier for people to play with, I created [CodexArsenal](https://gi
 
 ## Step-by-Step: Enrolling a Rogue Server and Controller
 
-When seeing this supported remote feature from Codex, the question I wanted to answer was simple: did Codex actually need to be installed on either machine, or could I recreate the communications myself?
+When seeing this supported remote feature from Codex, the question I wanted to answer was simple: did Codex actually need to be installed on either machine and could I recreate the communications myself? 
 
 To test this, I built a custom "rogue" server and controller that implemented the parts of the remote-control protocol needed to register, pair, and communicate through OpenAI's relay. Neither side needed a Codex installation.
 
@@ -282,7 +282,7 @@ There is also an opportunity to block/prevent unsupported JSON RPC methods to at
 
 ## Wrapping Up and Takeaways
 
-Although this approach to leveraging OpenAI infrastructure is new, the desire to use remote features by AI agents on the endpoint is not a new thing. Ryan Hausknecht showed an example of leveraging Claude as a C2 in his blog, [Claude & Control: An Introduction to Agentic C2 with Computer Use Agents](https://www.beyondtrust.com/blog/entry/claude-control-agentic-c2-computer-use-agent). AI agents on the endpoint are another application, and we need to treat them as such when it comes to trust across all areas - privilege, detections, etc.
+Although this approach to leveraging OpenAI infrastructure is new, the desire to use remote features by AI agents on the endpoint is not a new thing. [Ryan Hausknecht](https://x.com/Haus3c) showed an example of leveraging Claude as a C2 in his blog, [Claude & Control: An Introduction to Agentic C2 with Computer Use Agents](https://www.beyondtrust.com/blog/entry/claude-control-agentic-c2-computer-use-agent). AI agents on the endpoint are another application, and we need to treat them as such when it comes to trust across all areas - privilege, detections, etc.
 
 When seeing the Codex remote feature, the question I started with was simple: did Codex actually need to be installed on either machine? Unfo answer was no.
 
