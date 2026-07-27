@@ -1,5 +1,6 @@
 ---
 title: "WHAM, Bam, Thank You OpenAI for the C2 Infrastructure"
+subtitle: "Leveraging Codex's Remote-Control Relay for C2 Communications"
 description: "Codex's remote-control protocol can be repurposed as command-and-control infrastructure without Codex being installed on the endpoint."
 pubDate: 2026-07-27
 readingTime: "17 min read"
