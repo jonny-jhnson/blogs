@@ -9,7 +9,7 @@ slug: "wham-bam-thank-you-openai-for-the-c2-infra"
 order: 0
 ---
 
-*Originally posted: [WHAM, Bam, Thank You OpenAI for the C2 Infrastructure | PhantomLabs, BeyondTrust authored by me.]()*
+*Originally posted: [WHAM, Bam, Thank You OpenAI for the C2 Infrastructure | PhantomLabs, BeyondTrust authored by me.](https://www.beyondtrust.com/blog/entry/open-ai-codex-remote-control-c2-abuse)*
 
 ## Agent Trust
 It is no secret that attackers are targeting AI agents to either help them with their campaigns or mask their actions. With [AI agents on the endpoint](https://www.beyondtrust.com/solutions/ai-security) becoming more and more prevalent, the attack surface just continues to grow. Securing that surface starts with asking the same questions we have been asking about any other application for years. Just switch "application" for "agent":
