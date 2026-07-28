@@ -126,6 +126,7 @@ header.site {
 .article .back:hover { color: var(--accent); }
 .article .kicker { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 24px 0 12px; }
 .article h1 { font-size: 40px; font-weight: 600; line-height: 1.1; letter-spacing: -.012em; margin-bottom: 14px; }
+.article .asubtitle { font-size: 19px; font-weight: 400; line-height: 1.4; color: var(--muted); margin: -6px 0 18px; }
 .article .ameta { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-bottom: 28px; }
 
 /* ============================================================
@@ -256,6 +257,7 @@ footer.site a { color: var(--accent); text-decoration: none; }
 
   .article { padding-top: 40px; padding-bottom: 56px; }
   .article h1 { font-size: 28px; }
+  .article .asubtitle { font-size: 16px; }
   .prose { font-size: 17px; }
   .prose h2 { font-size: 23px; }
   .prose h3 { font-size: 19px; }
