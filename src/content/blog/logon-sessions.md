@@ -5,7 +5,7 @@ pubDate: 2022-07-26
 readingTime: "11 min read"
 tags: ["windows", "detection"]
 slug: "logon-sessions"
-order: 30
+order: 31
 ---
 
 > Written by Jonathan Johnson and [Brian Donohue](https://redcanary.com/authors/brian-donohue)

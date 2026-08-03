@@ -5,7 +5,7 @@ pubDate: 2021-03-15
 readingTime: "9 min read"
 tags: ["windows", "detection"]
 slug: "abstracting-scheduled-tasks"
-order: 41
+order: 42
 ---
 
 *Written by: [Jonathan Johnson](https://medium.com/u/78d2ff57ed70) and [Matt Hand](https://medium.com/u/43fe4a5cc44)*

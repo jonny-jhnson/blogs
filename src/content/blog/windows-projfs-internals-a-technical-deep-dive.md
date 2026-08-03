@@ -5,7 +5,7 @@ pubDate: 2026-04-20
 readingTime: "12 min read"
 tags: ["windows", "reverse engineering"]
 slug: "windows-projfs-internals-a-technical-deep-dive"
-order: 3
+order: 4
 ---
 
 *Originally published at *[Windows ProjFS Internals: A Technical Deep Dive | Huntress](https://www.huntress.com/blog/windows-projected-file-system-mechanics)*.*

@@ -5,7 +5,7 @@ pubDate: 2021-06-01
 readingTime: "10 min read"
 tags: ["detection"]
 slug: "evadere-classifications"
-order: 40
+order: 41
 ---
 
 ## Introduction

@@ -5,7 +5,7 @@ pubDate: 2022-12-14
 readingTime: "4 min read"
 tags: ["windows", "detection"]
 slug: "uncovering-windows-events-part-2"
-order: 26
+order: 27
 ---
 
 ### The Methodology

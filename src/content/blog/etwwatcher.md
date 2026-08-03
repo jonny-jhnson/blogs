@@ -5,7 +5,7 @@ pubDate: 2026-05-11
 readingTime: "8 min read"
 tags: ["windows"]
 slug: "etwwatcher"
-order: 2
+order: 3
 ---
 
 A research passion of mine is telemetry. This could be the identification of new telemetry sources, how to tap into telemetry sources to feed prevention and detection, or how to leverage that telemetry in ways others aren’t to surface adversarial tradecraft. Whichever one of these I am doing, I constantly find myself needing to query ETW providers.

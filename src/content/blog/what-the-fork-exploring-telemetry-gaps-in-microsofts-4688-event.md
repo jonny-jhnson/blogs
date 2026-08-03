@@ -5,7 +5,7 @@ pubDate: 2024-04-04
 readingTime: "4 min read"
 tags: ["windows", "detection", "reverse engineering"]
 slug: "what-the-fork-exploring-telemetry-gaps-in-microsofts-4688-event"
-order: 13
+order: 14
 ---
 
 *Originally posted: [What the Fork: Exploring Telemetry Gaps in Microsoft’s 4688 Event | Prelude (preludesecurity.com)](https://www.preludesecurity.com/blog/what-the-fork-exploring-telemetry-gaps-in-microsofts-4688-event) but authored by me.*

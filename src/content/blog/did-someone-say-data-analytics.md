@@ -5,7 +5,7 @@ pubDate: 2020-04-28
 readingTime: "6 min read"
 tags: ["detection"]
 slug: "did-someone-say-data-analytics"
-order: 44
+order: 45
 ---
 
 ### Integrating Jupyter Notebooks with Splunk Enterprise

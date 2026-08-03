@@ -5,7 +5,7 @@ pubDate: 2022-08-15
 readingTime: "6 min read"
 tags: ["windows", "reverse engineering"]
 slug: "wmi-internals-part-2"
-order: 29
+order: 30
 ---
 
 ### Reversing a WMI Provider

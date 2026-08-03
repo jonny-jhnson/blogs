@@ -5,7 +5,7 @@ pubDate: 2023-10-11
 readingTime: "10 min read"
 tags: ["windows", "detection", "reverse engineering"]
 slug: "demystifying-dll-hijacking"
-order: 19
+order: 20
 ---
 
 *This blog was originally written by me and posted by [BinaryDefense](https://www.binarydefense.com/resources/blog/demystifying-dll-hijacking-understanding-the-intricate-world-of-dynamic-link-library-attacks/).*

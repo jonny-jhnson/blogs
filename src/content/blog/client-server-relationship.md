@@ -5,7 +5,7 @@ pubDate: 2023-10-11
 readingTime: "8 min read"
 tags: ["windows", "detection", "reverse engineering"]
 slug: "client-server-relationship"
-order: 18
+order: 19
 ---
 
 *This blog was written by [Jonny Johnson,](https://twitter.com/jsecurity101) Senior Researcher of Adversarial Techniques and Capabilities at Binary Defense, and co-authored with [Charlie Clark](https://twitter.com/exploitph) and [Andrew Schwartz](https://twitter.com/4ndr3w6S) from [TrustedSec](https://www.trustedsec.com/). Blog was originally released by TrustedSec and [BinaryDefense](https://www.binarydefense.com/resources/blog/the-client-server-relationship-a-match-made-in-heaven/).*

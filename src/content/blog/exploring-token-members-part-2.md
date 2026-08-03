@@ -5,7 +5,7 @@ pubDate: 2022-02-16
 readingTime: "9 min read"
 tags: ["windows", "reverse engineering"]
 slug: "exploring-token-members-part-2"
-order: 35
+order: 36
 ---
 
 ### TokenTrustLevels

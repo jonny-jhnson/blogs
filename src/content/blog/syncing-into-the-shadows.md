@@ -5,7 +5,7 @@ pubDate: 2019-04-14
 readingTime: "12 min read"
 tags: ["detection"]
 slug: "syncing-into-the-shadows"
-order: 49
+order: 50
 ---
 
 ## Introduction:

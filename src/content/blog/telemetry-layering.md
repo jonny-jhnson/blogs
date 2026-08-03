@@ -5,7 +5,7 @@ pubDate: 2023-02-10
 readingTime: "8 min read"
 tags: ["windows", "detection"]
 slug: "telemetry-layering"
-order: 24
+order: 25
 ---
 
 ## Introduction

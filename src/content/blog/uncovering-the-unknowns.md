@@ -5,7 +5,7 @@ pubDate: 2019-10-09
 readingTime: "10 min read"
 tags: ["detection"]
 slug: "uncovering-the-unknowns"
-order: 46
+order: 47
 ---
 
 ### Mapping Windows API’s to Sysmon Events

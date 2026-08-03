@@ -5,7 +5,7 @@ pubDate: 2026-05-21
 readingTime: "16 min read"
 tags: ["sandbox", "windows", "ai"]
 slug: "codex-windows-sandbox"
-order: 1
+order: 2
 ---
 
 OpenAI recently published a [writeup](https://openai.com/index/building-codex-windows-sandbox/) on their new Windows sandbox design. The post covers the areas they explored, the options they rejected, such as [Windows Sandbox](https://learn.microsoft.com/en-us/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-install) and [AppContainer](https://learn.microsoft.com/en-us/windows/win32/secauthz/appcontainer-isolation), and why they focused on a multi-layer approach to balance usability and security. I found the implementation interesting because Windows gives you a lot of options for securing users, securable objects, and network connections. Instead of relying on one Windows capability, Codex pulls several of them together, including restricted tokens and synthetic SIDs, new users and a new group, and Firewall/WFP rules.

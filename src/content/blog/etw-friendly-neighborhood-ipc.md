@@ -5,7 +5,7 @@ pubDate: 2024-04-04
 readingTime: "5 min read"
 tags: ["windows", "reverse engineering"]
 slug: "etw-friendly-neighborhood-ipc"
-order: 14
+order: 15
 ---
 
 *Originally posted: [Event Tracing for Windows (ETW): Your Friendly Neighborhood IPC Mechanism | Prelude (preludesecurity.com)](https://www.preludesecurity.com/blog/event-tracing-for-windows-etw-your-friendly-neighborhood-ipc-mechanism) but authored by me.*

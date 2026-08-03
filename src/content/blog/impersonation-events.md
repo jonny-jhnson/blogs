@@ -5,7 +5,7 @@ pubDate: 2024-12-04
 readingTime: "6 min read"
 tags: ["windows", "detection"]
 slug: "impersonation-events"
-order: 9
+order: 10
 ---
 
 ## Introduction

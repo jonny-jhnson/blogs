@@ -5,7 +5,7 @@ pubDate: 2023-06-12
 readingTime: "9 min read"
 tags: ["windows", "reverse engineering"]
 slug: "kernel-callbacks-telemetry"
-order: 21
+order: 22
 ---
 
 ## Introduction

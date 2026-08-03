@@ -5,7 +5,7 @@ pubDate: 2019-09-16
 readingTime: "9 min read"
 tags: ["windows", "detection"]
 slug: "detecting-process-reimaging"
-order: 47
+order: 48
 ---
 
 ## **Background:**

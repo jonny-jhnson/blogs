@@ -5,7 +5,7 @@ pubDate: 2022-05-09
 readingTime: "9 min read"
 tags: ["windows", "detection"]
 slug: "defending-the-three-headed-relay"
-order: 32
+order: 33
 ---
 
 *A joint blog written by [Andrew Schwartz](https://twitter.com/4ndr3w6S), [Charlie Clark](https://twitter.com/exploitph), and [Jonny Johnson](https://twitter.com/jsecurity101)*

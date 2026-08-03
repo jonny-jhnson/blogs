@@ -5,7 +5,7 @@ pubDate: 2026-03-16
 readingTime: "9 min read"
 tags: ["windows", "reverse engineering"]
 slug: "wsl-com-hooking-rtti"
-order: 4
+order: 5
 ---
 
 ## Introduction

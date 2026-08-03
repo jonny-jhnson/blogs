@@ -5,7 +5,7 @@ pubDate: 2022-04-05
 readingTime: "6 min read"
 tags: ["windows", "detection", "reverse engineering"]
 slug: "bypassing-access-mask-auditing-strategies"
-order: 34
+order: 35
 ---
 
 ## Introduction

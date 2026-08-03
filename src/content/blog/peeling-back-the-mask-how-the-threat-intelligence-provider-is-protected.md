@@ -5,7 +5,7 @@ pubDate: 2025-09-29
 readingTime: "6 min read"
 tags: ["windows", "reverse engineering", "detection"]
 slug: "peeling-back-the-mask-how-the-threat-intelligence-provider-is-protected"
-order: 6
+order: 7
 ---
 
 ## Introduction

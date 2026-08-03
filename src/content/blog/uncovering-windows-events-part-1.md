@@ -5,7 +5,7 @@ pubDate: 2022-11-14
 readingTime: "6 min read"
 tags: ["windows", "detection"]
 slug: "uncovering-windows-events-part-1"
-order: 27
+order: 28
 ---
 
 ### **TelemetrySource**

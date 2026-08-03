@@ -5,7 +5,7 @@ pubDate: 2022-09-12
 readingTime: "6 min read"
 tags: ["windows", "reverse engineering"]
 slug: "wmi-internals-part-3"
-order: 28
+order: 29
 ---
 
 ### Beyond COM

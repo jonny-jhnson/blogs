@@ -5,7 +5,7 @@ pubDate: 2024-04-12
 readingTime: "10 min read"
 tags: ["windows", "reverse engineering", "detection"]
 slug: "understanding-etw-patching"
-order: 12
+order: 13
 ---
 
 ## Introduction

@@ -5,7 +5,7 @@ pubDate: 2019-03-12
 readingTime: "5 min read"
 tags: ["windows", "detection"]
 slug: "injecting-into-the-hunt"
-order: 50
+order: 51
 ---
 
 ## Background:

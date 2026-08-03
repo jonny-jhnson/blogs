@@ -5,7 +5,7 @@ pubDate: 2023-07-21
 readingTime: "8 min read"
 tags: ["windows", "reverse engineering"]
 slug: "threadsleeper"
-order: 20
+order: 21
 ---
 
 *Originally posted: *[https://www.binarydefense.com/resources/blog/threadsleeper-suspending-threads-via-gmer64-driver/](https://www.binarydefense.com/resources/blog/threadsleeper-suspending-threads-via-gmer64-driver/)

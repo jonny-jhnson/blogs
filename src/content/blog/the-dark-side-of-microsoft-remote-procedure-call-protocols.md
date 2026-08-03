@@ -5,7 +5,7 @@ pubDate: 2021-11-22
 readingTime: "6 min read"
 tags: ["windows", "detection"]
 slug: "the-dark-side-of-microsoft-remote-procedure-call-protocols"
-order: 38
+order: 39
 ---
 
 *Story was first released on the [Red Canary Publication](https://redcanary.com/blog/msrpc-to-attack/).*

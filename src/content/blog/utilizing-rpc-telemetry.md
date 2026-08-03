@@ -5,7 +5,7 @@ pubDate: 2020-07-06
 readingTime: "11 min read"
 tags: ["windows", "detection"]
 slug: "utilizing-rpc-telemetry"
-order: 42
+order: 43
 ---
 
 > A joint blog written by [Jared Atkinson](https://medium.com/u/b206c297df42), [Luke Paine](https://medium.com/u/783075d52e01), and [Jonathan Johnson](https://medium.com/u/78d2ff57ed70)

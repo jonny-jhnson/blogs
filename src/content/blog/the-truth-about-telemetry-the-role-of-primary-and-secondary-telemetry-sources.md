@@ -5,7 +5,7 @@ pubDate: 2025-03-17
 readingTime: "7 min read"
 tags: ["detection", "windows"]
 slug: "the-truth-about-telemetry-the-role-of-primary-and-secondary-telemetry-sources"
-order: 8
+order: 9
 ---
 
 Detection Engineers, Threat Hunters, and SOC Analysts all rely on one critical thing to do their jobs effectively — telemetry. However, while they all need telemetry, they may require different types of data or use the same data for different purposes. This demand drives EDR products to collect and provide diverse telemetry sources, often striving for a balance that serves all these functions — a “happy middle ground,” so to speak.

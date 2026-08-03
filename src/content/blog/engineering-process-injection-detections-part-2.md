@@ -5,7 +5,7 @@ pubDate: 2020-05-18
 readingTime: "14 min read"
 tags: ["windows", "detection"]
 slug: "engineering-process-injection-detections-part-2"
-order: 43
+order: 44
 ---
 
 ## Introduction:

@@ -5,7 +5,7 @@ pubDate: 2023-05-03
 readingTime: "9 min read"
 tags: ["windows", "reverse engineering"]
 slug: "npfs-impersonation"
-order: 22
+order: 23
 ---
 
 ## Introduction

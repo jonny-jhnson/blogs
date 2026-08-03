@@ -5,7 +5,7 @@ pubDate: 2023-12-18
 readingTime: "11 min read"
 tags: ["windows", "reverse engineering"]
 slug: "mastering-sedebugprivilege"
-order: 17
+order: 18
 ---
 
 Originally posted on the [Binary Defense page](https://www.binarydefense.com/resources/blog/mastering-windows-access-control-understanding-sedebugprivilege/), but was authored by me.

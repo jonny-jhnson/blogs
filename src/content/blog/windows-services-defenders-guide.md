@@ -5,7 +5,7 @@ pubDate: 2023-01-18
 readingTime: "10 min read"
 tags: ["windows", "detection", "reverse engineering"]
 slug: "windows-services-defenders-guide"
-order: 25
+order: 26
 ---
 
 ### It’s dangerous to find malicious services alone! Take this!

@@ -5,7 +5,7 @@ pubDate: 2024-06-12
 readingTime: "7 min read"
 tags: ["windows", "detection", "reverse engineering"]
 slug: "refining-detection-new-perspectives-on-etw-patching-telemetry"
-order: 11
+order: 12
 ---
 
 ## Introduction

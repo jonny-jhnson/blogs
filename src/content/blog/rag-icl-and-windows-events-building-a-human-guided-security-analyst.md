@@ -5,7 +5,7 @@ pubDate: 2025-12-18
 readingTime: "20 min read"
 tags: ["ai", "detection", "windows"]
 slug: "rag-icl-and-windows-events-building-a-human-guided-security-analyst"
-order: 5
+order: 6
 ---
 
 ## Introduction

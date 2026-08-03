@@ -5,7 +5,7 @@ pubDate: 2023-03-15
 readingTime: "6 min read"
 tags: ["windows", "detection"]
 slug: "uncovering-windows-events-part-3"
-order: 23
+order: 24
 ---
 
 ### Threat Intelligence ETW

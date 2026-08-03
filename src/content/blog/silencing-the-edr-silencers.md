@@ -5,7 +5,7 @@ pubDate: 2024-10-31
 readingTime: "8 min read"
 tags: ["windows", "detection", "reverse engineering"]
 slug: "silencing-the-edr-silencers"
-order: 10
+order: 11
 ---
 
 *Originally posted: [Silencing the EDR Silencers | Huntress (huntress.com) authored by me.](https://www.huntress.com/blog/silencing-the-edr-silencers)*

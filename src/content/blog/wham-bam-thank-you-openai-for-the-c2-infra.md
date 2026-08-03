@@ -6,7 +6,7 @@ pubDate: 2026-07-27
 readingTime: "17 min read"
 tags: ["ai", "security", "c2", "codex"]
 slug: "wham-bam-thank-you-openai-for-the-c2-infra"
-order: 0
+order: 1
 ---
 
 *Originally posted: [WHAM, Bam, Thank You OpenAI for the C2 Infrastructure | PhantomLabs, BeyondTrust authored by me.](https://www.beyondtrust.com/blog/entry/open-ai-codex-remote-control-c2-abuse)*

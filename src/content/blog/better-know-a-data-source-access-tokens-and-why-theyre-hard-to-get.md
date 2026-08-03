@@ -5,7 +5,7 @@ pubDate: 2022-04-20
 readingTime: "12 min read"
 tags: ["windows", "detection"]
 slug: "better-know-a-data-source-access-tokens-and-why-theyre-hard-to-get"
-order: 33
+order: 34
 ---
 
 > *This blog was originally written by me and posted by [Red Canary.](https://redcanary.com/blog/access-tokens/)*

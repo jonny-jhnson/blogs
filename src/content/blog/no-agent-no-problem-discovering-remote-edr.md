@@ -5,7 +5,7 @@ pubDate: 2025-06-06
 readingTime: "15 min read"
 tags: ["detection", "windows"]
 slug: "no-agent-no-problem-discovering-remote-edr"
-order: 7
+order: 8
 ---
 
 As the reader, I’m sure you’re thinking — “oh great, another EDR internals or bypass post”. I can fully understand that sentiment, as EDRs are quite the topic these days. However, this one is genuinely different. Over the past couple of months, I’ve been researching ways to build remote EDR capabilities without traditional agents, and I’ve discovered some fascinating techniques that I believe will be valuable for both red and blue teams.

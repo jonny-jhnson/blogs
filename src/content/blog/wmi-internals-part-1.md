@@ -5,7 +5,7 @@ pubDate: 2022-07-05
 readingTime: "8 min read"
 tags: ["windows", "reverse engineering"]
 slug: "wmi-internals-part-1"
-order: 31
+order: 32
 ---
 
 ### Understanding the Basics

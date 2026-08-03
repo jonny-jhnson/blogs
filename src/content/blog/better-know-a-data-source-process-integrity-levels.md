@@ -5,7 +5,7 @@ pubDate: 2021-12-13
 readingTime: "10 min read"
 tags: ["windows", "detection"]
 slug: "better-know-a-data-source-process-integrity-levels"
-order: 37
+order: 38
 ---
 
 ### Impossible to spoof, process integrity levels dictate trust between securable objects, offering defenders great visibility into privilege escalation.

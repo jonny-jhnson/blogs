@@ -5,7 +5,7 @@ pubDate: 2023-12-18
 readingTime: "9 min read"
 tags: ["windows", "detection"]
 slug: "uncovering-adversarial-ldap-tradecraft"
-order: 16
+order: 17
 ---
 
 A Write-Up by TrustedSec’s Research Lead [Carlos Perez](https://twitter.com/Carlos_Perez) and Binary Defense’s Research Lead [Jonathan Johnson](https://twitter.com/jsecurity101). Originally posted on the [Binary Defense page](https://www.binarydefense.com/resources/blog/uncovering-adversarial-ldap-tradecraft/).
