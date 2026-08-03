@@ -15,53 +15,57 @@ order: 0
 
 ## Endpoint Agent Workflows
 
-AI Agents have become a part of everyone's workflow. The more people are interacting with these agents, the higher the desire to integrate these agents to 3rd party applications like M365 (Outlook, Teams), Google Workspace, GitHub, etc. This makes individuals workflows faster and easier. But at what cost? Are we just allowing these agents any scope they want for these applications? Are we monitoring the application requests coming from these agents? In this blog I want to walkthrough, once valid credentials are obtained, how easy it is for an attacker to interact with MCP servers that are connected to a user's account and how this could lead to furthered compromise.
+[AI Agents](https://www.beyondtrust.com/solutions/ai-security) have become a part of everyone's workflow. The more people interacting with these agents, the higher the desire to integrate these agents with third-party applications like Microsoft 365 (Outlook, Teams), Google Workspace, GitHub, etc. This makes individual workflows faster and easier. But at what cost? Are we just allowing these agents any scope they want for these applications? Are we monitoring the application requests coming from these agents?
+
+In this blog, I will walk through how easy it is for an attacker to interact with [Model Context Protocol](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro) (MCP) servers that are connected to a user's account once valid credentials are obtained, and how this could lead to further compromise.
 
 ## Obtaining User Credentials
 
 Unfortunately, there are a number of ways to obtain a valid access token for a Codex user. In a follow-up blog I will go over the various options in detail, but for now I'll mention the most common ways I'd imagine an attacker obtaining a user's credentials.
 
-1. **Device Code Phishing**
+1. Device Code Phishing
 
-Codex recently started to support Device Code to legitimately authenticate a user. Device code phishing is not a new thing and has been a means for legitimate compromise for a while and has been well documented by various companies over time. Seeing this support made me think - if this isn't being leveraged by attackers yet, it will be.
+   Codex recently started to support Device Code to legitimately authenticate a user. [Device code phishing](https://dirkjanm.io/phishing-for-microsoft-entra-primary-refresh-tokens/) is not a new thing. It has been a means of legitimate compromise for a while and has been well documented by various companies over time. Seeing this support made me think, if this isn't being leveraged by attackers yet, it will be.
 
-2. **On Disk Theft**
+2. On Disk Theft
 
-In a [previous post](/blog/codex-windows-sandbox/) of mine I outlined that a user's credentials are stored in their home directory under `.codex\auth.json`, which gives whoever reads that file a valid access token, an id token, and a refresh token. Codex also supports a "sandbox" which due to how it is implemented gives the sandbox user not only the ability to read the parent user's auth.json file, but if multiple users have access to a computer and they all have Codex and the sandbox installed, a process launched as the sandbox user can read any of the auth.json files on disk.
+   [In a previous post of mine](https://www.beyondtrust.com/blog/entry/open-ai-codex-remote-control-c2-abuse), I outlined that a user's credentials are stored in their home directory under `.codex\auth.json`, which gives whoever reads that file a valid access token, an id token, and a refresh token. Codex also supports a "sandbox", which, due to how it is implemented, gives the sandbox user the ability to read the parent user's auth.json file. If multiple users share access to a computer and all have Codex and the sandbox installed, a process launched as the sandbox user can read any of the auth.json files on disk.
 
-There are going to be other ways for someone to obtain valid credentials of a ChatGPT user, which I will cover in a future post, but for now those are the most likely ways I see credentials being stolen for reuse.
+There are going to be other ways for someone to obtain valid credentials of a ChatGPT user, which I will cover in a future post, but for now, those are the most likely ways I see credentials being stolen for reuse.
 
 ## What Are Codex Apps?
 
-Codex allows a user to connect 3rd party applications (Gmail, GitHub, Google Docs, etc.) to integrate those tools into your workflow - Codex calls these integrations [Apps](https://developers.openai.com/codex/plugins). They are really just remote MCP servers that expose tools through their "store". To connect an App, go to `Codex -> Plugins`:
+Codex allows a user to connect 3rd party applications (Gmail, GitHub, Google Docs, etc.) to integrate those tools into your workflow. Codex calls these integrations [Apps](https://developers.openai.com/codex/plugins). They are really just remote MCP servers that expose tools through their "store". To connect an App, go to `Codex -> Plugins`:
 
 ![Figure 2 — The Codex plugin store, where an App such as GitHub can be installed.](/images/im-in-your-apps/image2.png)
 
-Codex ships with a set of default Apps you can attach, such as GitHub, Notion, Google Calendar, Teams, Outlook Calendar, and others. You can also build your own. For this writeup, I'll focus on default apps that can be connected to a Codex account. In the above you can see there is a `GitHub` app I could install and integrate.
+Codex ships with a set of default Apps you can attach, such as GitHub, Notion, Google Calendar, Teams, Outlook Calendar, and others. You can also build your own. For this writeup, I'll focus on default apps that can be connected to a Codex account. In the above image (Figure 2), you can see there is a GitHub app I could install and integrate.
 
 You can then see which Apps are installed by going to `Codex -> Plugins -> Manage -> Apps`:
 
 ![Figure 3 — The Apps tab under Manage, showing the six Apps connected to my account.](/images/im-in-your-apps/image3.png)
 
-If you click on one of the installed apps it will open up and show you the available Write and Read tools it supports:
+If you click on one of the installed apps, it will open up and show you the available Write and Read tools it supports:
 
 ![Figure 4 — The Gmail App detail view.](/images/im-in-your-apps/image4.png)
 
-When you connect a third-party application like Google Drive, you go through the usual OAuth flow. After that, Codex generally does not ask you to sign in again before enumerating files, searching them, or creating new ones. That is because the connector authorization is managed server-side for your Codex account, rather than being freshly approved from the local machine on each request.
+When you connect a third-party application like Google Drive, you go through the usual OAuth flow. After that, Codex generally does not ask you to sign in again before enumerating files, searching them, or creating new ones. That is because the connector authorization is managed server-side for your Codex account, rather than being freshly approved from the local machine for each request.
 
-The mechanism behind this is a remote MCP server called [`codex_apps`](https://github.com/openai/codex/blob/aa184548b1ee0a559fba7be658240053e270e16f/codex-rs/codex-mcp/src/mcp/mod.rs#L44). For the Codex client, the `codex_apps` MCP endpoint resolves to [`https://chatgpt.com/backend-api/wham/apps`](https://github.com/openai/codex/blob/aa184548b1ee0a559fba7be658240053e270e16f/codex-rs/codex-mcp/src/mcp/mod.rs#L436). Once a connector, the backend's term for an App, is authorized the backend exposes its tools to your account. Codex, acting as the MCP client, calls `tools/list` to discover them and `tools/call` to invoke them on the user's behalf.
+The mechanism behind this is a remote MCP server called [`codex_apps`](https://github.com/openai/codex/blob/aa184548b1ee0a559fba7be658240053e270e16f/codex-rs/codex-mcp/src/mcp/mod.rs#L44). For the Codex client, the `codex_apps` MCP endpoint resolves to [`https://chatgpt.com/backend-api/wham/apps`](https://github.com/openai/codex/blob/aa184548b1ee0a559fba7be658240053e270e16f/codex-rs/codex-mcp/src/mcp/mod.rs#L436). Once a connector, the backend's term for an App, is authorized, the backend exposes its tools to your account. Codex, acting as the MCP client, calls `tools/list` to discover them and `tools/call` to invoke them on the user's behalf.
 
-There are really 2 phases for this flow - Authorization and Invocation of a tool. At a high level the steps are below:
+There are really two phases to this flow: Authorization and Invocation of a tool. At a high level, the steps are outlined below.
 
-**Authorization (one-time, or at least less frequent):**
+Phase 1: Authorization (one-time, less frequent):
+
 1. The user connects an App in ChatGPT/Codex.
 2. The user completes the provider's OAuth flow, granting the requested scopes.
 3. OpenAI stores and maintains the resulting connected-App authorization on the user's behalf.
-4. The App's allowed tools are surfaced to the user's Codex session through the Apps/MCP tool layer (codex_apps).
+4. The App's allowed tools are surfaced to the user's Codex session through the Apps/MCP tool layer (`codex_apps`).
 
-**Invocation (per request):**
-5. The user requests document creation.
-6. Codex calls the relevant App tool through codex_apps.
+Phase 2: Invocation (per request):
+
+5. The user requests a tool call (say document creation).
+6. Codex calls the relevant App tool through `codex_apps`.
 7. The Apps/MCP backend calls the upstream provider API using the user's stored App authorization.
 8. The provider performs the action, say a Google Doc is created, and the result is returned to the Codex session.
 
@@ -69,17 +73,17 @@ There are really 2 phases for this flow - Authorization and Invocation of a tool
 
 ### App Scopes
 
-One thing to note about granting scopes - when playing around with these Apps, I noticed that there wasn't a way to limit their scopes. Google Docs I could, but below is an example of Teams where it was basically like - give me the world and trust me:
+There is one thing to note about granting scopes. When playing around with these Apps, I noticed that there wasn't a way to [limit their scopes](https://www.beyondtrust.com/solutions/least-privilege). With Google Docs, I could, but below is an example where Teams basically said, "give me the world and trust me":
 
 ![Figure 6 — The Microsoft consent screen for the Teams App.](/images/im-in-your-apps/image6.png)
 
 ## Manually Calling Codex_Apps
 
-After obtaining a user's access token, by one of the ways from the above section or another way, I should be able to communicate with Codex's MCP server `codex_apps`. If we look at the typically granted access token (one's typically on disk) we get the following scopes:
+After obtaining a user's access token, either by one of the ways from the above section or another way, I should be able to communicate with Codex's MCP server `codex_apps`. If we look at the typically granted access token (one's typically on disk) we get the following scopes:
 
 `openid,profile,email,offline_access,api.connectors.read,api.connectors.invoke`
 
-The `api.connectors.read` and `api.connectors.invoke` scopes are what enable interaction with the available tools through the MCP layer. Now, leveraging [CodexArsenal](https://github.com/jonny-jhnson/CodexArsenal), a PowerShell research module for communicating directly with OpenAI's backend APIs, let's enumerate the tools the MCP server exposes:
+The `api.connectors.read` and `api.connectors.invoke` scopes are what enable interaction with the available tools through the MCP layer. Now, leveraging [CodexArsenal](https://github.com/jonny-jhnson/CodexArsenal), a PowerShell toolkit I built for interacting with Codex's backend endpoints, let's enumerate the tools the MCP server exposes:
 
 ```powershell
 $accessToken = 'eyJ..'
@@ -97,9 +101,9 @@ Microsoft Teams
 Notion
 ```
 
-For my account you can see I have the following apps attached - GitHub, Gmail, Google Drive, and more. What can I do with these though? Well each application has supported MCP tools that can be invoked from the codex client (or anyone with a codex access token). Now, let's look at a Gmail example:
+For my account, you can see I have the following apps attached - GitHub, Gmail, Google Drive, and more. What can I do with these though? Well each application has supported MCP tools that can be invoked from the codex client (or anyone with a codex access token). Now, let's look at a Gmail example:
 
-Let's say if you wanted to see the list of available calls that could be invoked for the Gmail app, you could query them via:
+Let's say you wanted to see the list of available calls that could be invoked for the Gmail app. You could query them via:
 
 ```powershell
 $tools | Where-Object name -Like '*gmail*' | % {
@@ -130,9 +134,9 @@ Inputs      : {to: string, subject: string, body: string, cc: string...}
 
 ```
 
-See anything interesting? How about `gmail_send_email`? This means I can invoke the `gmail_send_email` tool through the `codex_app` MCP server that sends an email. Could this be useful for anything? Maybe...internal phishing? If a coworker sends you an email that says "can you take a look at this document" or from IT that says "we are migrating to Microsoft, please click here to authenticate" - would you click on that? You don't see a weird "EXTERNAL" at the top of the email...or that the email is coming from a weird domain....so why not? This MCP tool also allows someone to add attachments.
+See anything interesting? How about `gmail_send_email`? This means I can invoke the `gmail_send_email` tool through the `codex_apps` MCP server to send an email as the victim. Could this be useful for anything? Maybe...internal phishing? If a coworker sends you an email that says, "can you take a look at this document," or if IT sends an email that says, "we are migrating to Microsoft, please click here to authenticate," would you click on that? You don't see a weird "EXTERNAL" at the top of the email, and the email isn't coming from a weird domain...so why not?
 
-I ran the following to validate:
+This MCP tool also allows someone to add attachments. I ran the following to validate:
 
 ```powershell
 $send = Invoke-CodexTool -AccessToken $accessToken -AccountId $accountId -Name 'gmail_send_email' -Arguments @{
@@ -144,7 +148,7 @@ $send = Invoke-CodexTool -AccessToken $accessToken -AccountId $accountId -Name '
 
 ![Figure 7 — The email that landed in my inbox after invoking gmail_send_email through the MCP endpoint.](/images/im-in-your-apps/image7.png)
 
-Below are some other MCP tools that may be of *interest* to others. This isn't every tool that every remote MCP server supports, but just the ones that could be abused in my opinion:
+Below are some other MCP tools that may be of interest to others. This isn't every tool that every remote MCP server supports, just the ones that could be abused, in my opinion:
 
 ### Outlook
 
@@ -186,7 +190,7 @@ Below are some other MCP tools that may be of *interest* to others. This isn't e
 | `github_get_user_login`          | Return the GitHub login for the authenticated user.                                                                                                                                                                                                                                                                                              |
 | `github_download_user_content`   | Download a GitHub private user image attachment URL. Use this only for private-user-images.githubusercontent.com URLs, such as GitHub issue or pull request image uploads. Use fetch or fetch_file for repository files.                                                                                                                         |
 
-As you can see, there are some tools that can be invoked that allows an attacker to impersonate a user. This can be used to extend malicious binaries through emails, create PRs, etc. There are plenty of other tools that are exposed in these apps, but also other apps that I didn't explore. Personally, I wish there was a way for me to track remote MCP tool invocations per session. Does this logging exist currently?
+As you can see, there are some tools that can be invoked to allow an attacker to impersonate a user. These can be used to extend malicious binaries through emails, create pull requests (PRs), etc. There are plenty of other tools that are exposed in these apps, but also other apps that I didn't explore. Personally, I wish there was a way for me to track remote MCP tool invocations per session. Does this logging exist currently?
 
 ## Detection and Logs
 
@@ -228,15 +232,15 @@ Because of that, provider logs are useful for confirming the resulting activity,
 
 ### Desired OpenAI Telemetry
 
-What I would want is for OpenAI to expose an MCP tool invocation event that fires per tool call and shows what was invoked and where the request came from. Useful fields would include:
+OpenAI could expose an MCP tool invocation event for each tool call that shows what was invoked and where the request came from. Useful fields would include:
 
-- the user and the connector/App name
-- the tool name and result status
-- source IP address, user agent, and client type
-- request ID, and the access token or session identifier behind the call
-- structured or redacted parameters relevant to the action
+- The user and the connector/App name
+- The tool name and result status
+- Source IP address, user agent, and client type
+- Request ID, and the access token or session identifier behind the call
+- Structured or redacted parameters relevant to the action
 
-We want to see what session is invoking MCP tools and where that session request is coming from. The origin fields are exactly what provider-side logs can't give us, since as shown above Gmail only ever sees OpenAI's connector IP.
+We want to see what session is invoking MCP tools and where that session request is coming from. The origin fields are exactly what provider-side logs can't give us since (as shown above) Gmail only ever sees OpenAI's connector IP.
 
 For example, assume UserA legitimately uses Codex from ComputerA for day-to-day work. During that session, UserA invokes one MCP tool to create a Google Doc and another to email that document to a coworker.
 
@@ -246,7 +250,7 @@ Now assume UserA's Codex credentials are stolen and replayed from ComputerB. The
 
 ![Figure 9 — Showing attacker making calls to MCP tools.](/images/im-in-your-apps/image9.png)
 
-Although, from the provider side, Gmail only shows that UserA sent emails through the OpenAI connected app. The question we'd want the telemetry to answer is why the same session is suddenly invoking tools from a different machine, IP address, user agent, and client instance (or where there isn't a legitimate client instance). A defender should be able to tie both calls back to UserA, the Codex client, the source IP, and the session behind the requests, then join that activity against provider-side logs to confirm the action actually executed.
+Although, from the provider side, Gmail only shows that UserA sent emails through the OpenAI connected app. The question we'd want the telemetry to answer is why the same session is suddenly invoking tools from a different machine, IP address, user agent, and client instance (or where there isn't a legitimate client instance). A defender should be able to tie both calls back to UserA, the Codex client, the source IP, and the session behind the requests, then join that activity against provider-side logs to confirm the action that was actually executed.
 
 ![Figure 10 — Shows what a potential event could surface between the legitimate and attacker user calls.](/images/im-in-your-apps/image10.png)
 
@@ -267,12 +271,9 @@ With limited logging, what happens if these credentials are stolen? How are dete
 
 I would like to see logging made available to the public so researchers can build and share detections where applicable. I would also like to see better logging around this activity more generally. Although the Apps themselves, such as Gmail, may provide logging, the resulting activity may not look suspicious from the provider side. Because of that, it is important for OpenAI and other AI agent platforms to provide effective logging for these actions.
 
-I would also like to see the `auth.json` file encrypted, similar to how Codex protects sandbox user credentials on disk with DPAPI encryption. This would at least raise the barrier to entry for using stolen credentials.
-
 ## References
 
-* [How Command Injection Vulnerability in OpenAI Codex Leads to GitHub Token Compromise by Tyler Jespersen](https://www.beyondtrust.com/blog/entry/openai-codex-command-injection-vulnerability-github-token?utm_source=linkedin&utm_medium=organic+social&utm_content=phantomlabs)
-
-* [Apps in ChatGPT](https://help.openai.com/en/articles/11487775-apps-in-chatgpt)
-
-* [MCP and Connectors](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)
+- [Apps in ChatGPT](https://help.openai.com/en/articles/11487775-apps-in-chatgpt)
+- [MCP and Connectors](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)
+- [How Command Injection Vulnerability in OpenAI Codex Leads to GitHub Token Compromise by Tyler Jespersen](https://www.beyondtrust.com/blog/entry/openai-codex-command-injection-vulnerability-github-token?utm_source=linkedin&utm_medium=organic+social&utm_content=phantomlabs)
+- [Securing Agentic AI Workloads with Visibility and Privileged Control](https://www.beyondtrust.com/blog/entry/securing-agentic-ai-workloads)
