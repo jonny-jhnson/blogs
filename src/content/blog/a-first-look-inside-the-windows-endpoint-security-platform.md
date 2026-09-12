@@ -104,7 +104,7 @@ else
     RuleEngine::process_event<ProcessTerminate>(..., &event);
 ```
 
-Before events can be delivered, the consumer creates an event queue with `EspCreateEventQueue` and connects to it with `EspConnectEventQueueWithCallback`. The client and queue GUIDs tell `server::connect` which kernel queue this delivery connection belongs to. Once WESP resolves the queue, it creates the queue's delivery worker with `PsCreateSystemThread`. When the queue is empty, the worker waits on a kernel synchronization object (`KEVENT`) using [`KeWaitForSingleObject`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kewaitforsingleobject).
+Before events can be delivered, the consumer creates an event queue with `EspCreateEventQueue`. The request enters `wesp.sys` through `message_notify_callback`, which calls `ClientObject::create_event_queue` to create the kernel queue. The consumer then calls `EspConnectEventQueueWithCallback`, using the client and queue GUIDs to connect its notification callback to the newly created queue. WESP creates the queue's delivery worker with `PsCreateSystemThread`, which waits on a kernel synchronization object (`KEVENT`) using [`KeWaitForSingleObject`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kewaitforsingleobject) when the queue is empty.
 
 The consumer then allocates a notification object with `EspAllocateEventNotification` and arms it with `EspArmEventNotification`. Arming the notification posts an asynchronous [`FilterGetMessage`](https://learn.microsoft.com/en-us/windows/win32/api/fltuser/nf-fltuser-filtergetmessage), leaving the consumer waiting for WESP to deliver an event.
 
