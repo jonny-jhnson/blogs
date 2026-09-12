@@ -18,7 +18,7 @@ We finally have our first public appearance of WESP in the latest Windows Inside
 
 In this blog, I am going to go over my initial analysis of wesp.sys and espclient.dll, how some of the components work, and a POC I built to register a client and receive process-creation events. Again, there is no public SDK and these components will change over time, so I wouldn't use this as the final "how WESP works" guide, but more of my initial analysis.
 
-**Note:** ***To make the code flow for WESP easier to read I trimmed down the code snippets, which means that they are not a 1:1 for what is in the binaries and leave out some detail.***
+**Note:** ***To make the code flow for WESP easier to read I trimmed down the code snippets, which means that they are not one-to-one with what is in the binaries and leave out some detail.***
 
 ## WESP Architecture: Kernel and User-Mode Components
 At a high level, WESP uses a consumer/producer architecture built around a Microsoft-owned driver/minifilter (wesp.sys) and a user-mode client library (espclient.dll). Security vendors register a WESP consumer, create an event queue, and install rules whose actions point to that queue. Matching events are delivered to callbacks in their normal user-mode process.
