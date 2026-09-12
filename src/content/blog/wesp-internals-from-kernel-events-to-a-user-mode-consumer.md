@@ -178,7 +178,7 @@ C:\Users\TestUser\Desktop\espclient.dll {Microsoft.Windows.WESP.Client}
 The provider and its current event set are also visible in my [EtwWatcher snapshot for build 29661](https://jonny-jhnson.github.io/EtwWatcher/#view=browse&snap=10_0_29661_1000_Insider.ndjson.gz&p=wesp). Since this is a preview client DLL, I would expect that schema to move with the API. Below is an example of the `EspCreateEventQueue` event:
 ![WESP ETW event](/images/wesp-internals-from-kernel-events-to-a-user-mode-consumer/image4.png)
 
-## Final Thoughts on Moving Endpoint Security Out of the Kernel
+## Wrapping Up
 
 It was a ton of fun to get my hands on these first two public WESP binaries and reverse them. Moving out of the kernel is a huge step in Windows and I think a lot of people thought it was further away than it is. I don't think it is the technology that will take forever, but organizations upgrading their machines. This will take a significant amount of time, but to see how far this has come in about 18 months is incredible.
 
