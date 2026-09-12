@@ -18,7 +18,7 @@ We finally have our first public appearance of WESP in the latest Windows Inside
 
 In this blog, I am going to go over my initial analysis of wesp.sys and espclient.dll, how some of the components work, and a POC I built to register a client and receive process-creation events. Again, there is no public SDK and these components will change over time, so I wouldn't use this as the final "how WESP works" guide, but more of my initial analysis.
 
-Note: To make the code flow for WESP easier to read I trimmed down the code snippets, which means that they are not a 1:1 for what is in the binaries and leave out some detail.
+**Note:** ***To make the code flow for WESP easier to read I trimmed down the code snippets, which means that they are not a 1:1 for what is in the binaries and leave out some detail.***
 
 ## WESP Architecture: Kernel and User-Mode Components
 At a high level, WESP uses a consumer/producer architecture built around a Microsoft-owned driver/minifilter (wesp.sys) and a user-mode client library (espclient.dll). Security vendors register a WESP consumer, create an event queue, and install rules whose actions point to that queue. Matching events are delivered to callbacks in their normal user-mode process.
@@ -79,9 +79,9 @@ After the caller passes these checks, server::connect reads the context created 
 
 From what I can tell, the access checks happen anytime a new connection is made to `\EspFilterPort`. This includes things like registering a client, unregistering a client, and enumerating registered or connected clients, since espclient.dll opens a short-lived connection for each of those operations.
 
-EspConnectClient also triggers the check when it creates the longer-lived management connection. Once that connection is established, requests sent with FilterSendMessage reuse the same handle and do not query the token or process protection again. The driver instead checks whether the existing connection is allowed to perform the requested operation.
+`EspConnectClient` also triggers the check when it creates the longer-lived management connection. Once that connection is established, requests sent with `FilterSendMessage` reuse the same handle and do not query the token or process protection again. The driver instead checks whether the existing connection is allowed to perform the requested operation.
 
-Receiving events follows the same idea but uses a separate connection created by EspConnectEventQueueWithCallback. That connection receives its own access check, then waits for events with [FilterGetMessage](https://learn.microsoft.com/en-us/windows/win32/api/fltuser/nf-fltuser-filtergetmessage). Receiving individual messages does not cause another connection or repeat the access check. If either persistent connection is closed and reopened, the checks run again.
+Receiving events follows the same idea but uses a separate connection created by `EspConnectEventQueueWithCallback`. That connection receives its own access check, then waits for events with [FilterGetMessage](https://learn.microsoft.com/en-us/windows/win32/api/fltuser/nf-fltuser-filtergetmessage). Receiving individual messages does not cause another connection or repeat the access check. If either persistent connection is closed and reopened, the checks run again.
 
 ### How Events Move from Producer to Consumer
 The point of WESP is to give security vendors endpoint detection and response (EDR) like visibility without requiring each vendor to ship another kernel driver. WESP collects events for processes, threads, image loads, files, registry keys, and handles, then sends the events that match a client's rules back to user mode.
@@ -113,6 +113,7 @@ The user-mode half is set up by `EspConnectEventQueueWithCallback`. The client a
 When the rule matches, the queue's delivery thread removes the notification and calls [FltSendMessage](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fltkernel/nf-fltkernel-fltsendmessage). That satisfies the pending receive in espclient.dll, which validates the message and invokes the consumer's callback. The callback acknowledges it with `EspCompleteEventNotification`, then rearms the notification object for the next event. Completing a notification does not rearm it automatically.
 
 This is the full path at a high level:
+
 ![WESP consumer and producer event flow](/images/a-first-look-inside-the-windows-endpoint-security-platform/image2.png)
 
 ## Building a WESP Consumer POC
@@ -177,6 +178,7 @@ C:\Users\TestUser\Desktop\espclient.dll {Microsoft.Windows.WESP.Client}
 ```
 
 The provider and its current event set are also visible in my [EtwWatcher snapshot for build 29661](https://jonny-jhnson.github.io/EtwWatcher/#view=browse&snap=10_0_29661_1000_Insider.ndjson.gz&p=wesp). Since this is a preview client DLL, I would expect that schema to move with the API. Below is an example of the `EspCreateEventQueue` event:
+
 ![WESP ETW event](/images/a-first-look-inside-the-windows-endpoint-security-platform/image4.png)
 
 ## Wrapping Up
