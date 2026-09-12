@@ -8,7 +8,7 @@ slug: "a-first-look-inside-the-windows-endpoint-security-platform"
 order: -1
 ---
 
-## Why Microsoft Introduced the Windows Endpoint Security Platform
+## Introduction into the Windows Endpoint Security Platform
 
 The CrowdStrike outage in July 2024 put a lot of attention around endpoint kernel development and raised the question from Microsoft if they still wanted to allow security vendors to develop kernel components. Microsoft announced the [Windows Resiliency Initiative (WRI)](https://blogs.windows.com/windowsexperience/2024/11/19/windows-security-and-resiliency-protecting-your-business/) in November 2024 and its focus was around giving security vendors more ways to build their products outside the kernel, while not removing capability.
 
@@ -19,6 +19,7 @@ We finally have our first public appearance of WESP in the latest Windows Inside
 In this blog, I am going to go over my initial analysis of wesp.sys and espclient.dll, how some of the components work, and a POC I built to register a client and receive process-creation events. Again, there is no public SDK and these components will change over time, so I wouldn't use this as the final "how WESP works" guide, but more of my initial analysis.
 
 Note: To make the code flow for WESP easier to read I trimmed down the code snippets, which means that they are not a 1:1 for what is in the binaries and leave out some detail.
+
 ## WESP Architecture: Kernel and User-Mode Components
 At a high level, WESP uses a consumer/producer architecture built around a Microsoft-owned driver/minifilter (wesp.sys) and a user-mode client library (espclient.dll). Security vendors register a WESP consumer, create an event queue, and install rules whose actions point to that queue. Matching events are delivered to callbacks in their normal user-mode process.
 
@@ -114,7 +115,7 @@ When the rule matches, the queue's delivery thread removes the notification and 
 This is the full path at a high level:
 ![WESP consumer and producer event flow](/images/a-first-look-inside-the-windows-endpoint-security-platform/image2.png)
 
-## Building a WESP Consumer Proof of Concept
+## Building a WESP Consumer POC
 With the kernel path mapped out, I wanted to see if I could actually consume one of these events. There is no public WESP SDK, but espclient.dll exports enough of the client API to build a small proof of concept (POC).
 
 I created a POC called [WespConsumerPOC](https://github.com/jonny-jhnson/WespConsumerPOC) that can register a consumer, create a queue, create a process creation rule, and have enough output to prove the event made it back to user mode. I still don't know the full ProcessCreate event structure, so not all of the event metadata is printed.
@@ -155,7 +156,7 @@ Registering a client creates an entry under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentCo
 
 I did not spend much more time trying to access the key directly. The client APIs already gave me a supported path to enumerate and remove registrations, which was all I needed for the POC.
 
-## Event Tracing for Windows (ETW) Visibility
+## WESP ETW Visibility
 
 I found one TraceLogging provider in `espclient.dll`: `Microsoft.Windows.WESP.Client`. It records client API activity, including queue, rule, and connection operations, with events for both successes and failures.
 
