@@ -1,10 +1,10 @@
 ---
-title: "WESP Internals: From Kernel Events to a User-Mode Consumer"
+title: "A First Look Inside the Windows Endpoint Security Platform"
 description: "An initial analysis of wesp.sys and espclient.dll, how WESP moves kernel events to user mode, and a POC for receiving process-creation events."
 pubDate: 2026-09-11T12:00:00-04:00
 readingTime: "11 min read"
 tags: ["windows", "reverse engineering"]
-slug: "wesp-internals-from-kernel-events-to-a-user-mode-consumer"
+slug: "a-first-look-inside-the-windows-endpoint-security-platform"
 order: -1
 ---
 
@@ -25,7 +25,7 @@ At a high level, WESP uses a consumer/producer architecture built around a Micro
 The kernel mode driver (wesp.sys) still must register callbacks for event collection and safely package the data, but the vendor parsing, detection, and response logic can live in a normal process. That puts more of the driver development responsibility on Microsoft instead of a whole bunch of third parties with varying levels of kernel experience. A crash in the user-mode consumer does not, by itself, bring down the box which was the ultimate goal of this project.
 
 One thing you'll notice right off the bat in either binary is the Esp prefix used by WESP APIs:
-![WESP API exports](/images/wesp-internals-from-kernel-events-to-a-user-mode-consumer/image1.png)
+![WESP API exports](/images/a-first-look-inside-the-windows-endpoint-security-platform/image1.png)
 
 The client binary, espclient.dll, already has a lot of exported APIs. Even without the SDK, symbols allowed me to understand these functions enough to where I was able to get a minimal POC working with the help of my AI friend, which I will show later in this blog!
 
@@ -112,7 +112,7 @@ The user-mode half is set up by `EspConnectEventQueueWithCallback`. The client a
 When the rule matches, the queue's delivery thread removes the notification and calls [FltSendMessage](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fltkernel/nf-fltkernel-fltsendmessage). That satisfies the pending receive in espclient.dll, which validates the message and invokes the consumer's callback. The callback acknowledges it with `EspCompleteEventNotification`, then rearms the notification object for the next event. Completing a notification does not rearm it automatically.
 
 This is the full path at a high level:
-![WESP consumer and producer event flow](/images/wesp-internals-from-kernel-events-to-a-user-mode-consumer/image2.png)
+![WESP consumer and producer event flow](/images/a-first-look-inside-the-windows-endpoint-security-platform/image2.png)
 
 ## Building a WESP Consumer Proof of Concept
 With the kernel path mapped out, I wanted to see if I could actually consume one of these events. There is no public WESP SDK, but espclient.dll exports enough of the client API to build a small proof of concept (POC).
@@ -143,7 +143,7 @@ The queue-before-rule ordering is what initially tripped me up. The rule does no
 
 After some testing and some help from an AI friend, this is the output of the POC:
 
-![WESP consumer POC receiving process creation events](/images/wesp-internals-from-kernel-events-to-a-user-mode-consumer/image5.png)
+![WESP consumer POC receiving process creation events](/images/a-first-look-inside-the-windows-endpoint-security-platform/image5.png)
 
 Woo! Events! This was exciting to get working. The client and its persisted WESP objects can also be removed with:
 
@@ -151,7 +151,7 @@ Woo! Events! This was exciting to get working. The client and its persisted WESP
 .\wesp-consumer.exe remove "{FCB4EF81-F69B-4979-ADA2-C7BCF7B73792}"
 ```
 
-Registering a client creates an entry under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\wesp\PersistedStore\Clients\<client-guid>`. I tried opening it from a SYSTEM prompt running as PPL (WinTcb), but still received access denied. ![WESP persisted client registry access denied](/images/wesp-internals-from-kernel-events-to-a-user-mode-consumer/image3.png)
+Registering a client creates an entry under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\wesp\PersistedStore\Clients\<client-guid>`. I tried opening it from a SYSTEM prompt running as PPL (WinTcb), but still received access denied. ![WESP persisted client registry access denied](/images/a-first-look-inside-the-windows-endpoint-security-platform/image3.png)
 
 I did not spend much more time trying to access the key directly. The client APIs already gave me a supported path to enumerate and remove registrations, which was all I needed for the POC.
 
@@ -176,7 +176,7 @@ C:\Users\TestUser\Desktop\espclient.dll {Microsoft.Windows.WESP.Client}
 ```
 
 The provider and its current event set are also visible in my [EtwWatcher snapshot for build 29661](https://jonny-jhnson.github.io/EtwWatcher/#view=browse&snap=10_0_29661_1000_Insider.ndjson.gz&p=wesp). Since this is a preview client DLL, I would expect that schema to move with the API. Below is an example of the `EspCreateEventQueue` event:
-![WESP ETW event](/images/wesp-internals-from-kernel-events-to-a-user-mode-consumer/image4.png)
+![WESP ETW event](/images/a-first-look-inside-the-windows-endpoint-security-platform/image4.png)
 
 ## Wrapping Up
 
