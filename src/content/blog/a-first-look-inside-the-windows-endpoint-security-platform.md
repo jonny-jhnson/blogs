@@ -104,13 +104,13 @@ else
     RuleEngine::process_event<ProcessTerminate>(..., &event);
 ```
 
-`RuleEngine::process_event<ProcessCreate>` evaluates the installed ProcessCreate rules. If a rule matches, its action identifies the target event queue. WESP builds the requested notification and passes it to `EventQueue::queue_async_notification_internal`.
+Before events can be delivered, the consumer creates an event queue with `EspCreateEventQueue` and connects to it with `EspConnectEventQueueWithCallback`. The client and queue GUIDs tell `server::connect` which kernel queue this delivery connection belongs to. Once WESP resolves the queue, it creates the queue's delivery worker with `PsCreateSystemThread`. When the queue is empty, the worker waits on a kernel synchronization object (`KEVENT`) using `KeWaitForSingleObject`.
 
-The user-mode half is set up by `EspConnectEventQueueWithCallback`. The client and queue IDs tell server::connect which kernel queue this delivery connection belongs to. The callback itself never crosses into the kernel; it stays inside espclient.dll with the caller's context.
+The consumer then allocates a notification object with `EspAllocateEventNotification` and arms it with `EspArmEventNotification`. Arming the notification posts an asynchronous `FilterGetMessage`, leaving the consumer waiting for WESP to deliver an event.
 
-`EspCreateEventQueue` creates the kernel queue object, but it does not start the delivery worker. That happens when `EspConnectEventQueueWithCallback` opens the queue's delivery connection. The consumer then calls `EspAllocateEventNotification` and `EspArmEventNotification`. Allocation is local to the DLL. Arming the notification posts the asynchronous FilterGetMessage that waits for WESP.
+When a process is created, `RuleEngine::process_event<ProcessCreate>` evaluates the installed ProcessCreate rules. If a rule matches, WESP uses the queue referenced by that rule as the notification's destination. WESP builds the notification and passes it to `EventQueue::queue_async_notification_internal`, which adds it to the queue and wakes the delivery worker by signaling the `KEVENT`.
 
-When the rule matches, the queue's delivery thread removes the notification and calls [FltSendMessage](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fltkernel/nf-fltkernel-fltsendmessage). That satisfies the pending receive in espclient.dll, which validates the message and invokes the consumer's callback. The callback acknowledges it with `EspCompleteEventNotification`, then rearms the notification object for the next event. Completing a notification does not rearm it automatically.
+Once awake, the delivery worker removes the notification from the queue and calls [FltSendMessage](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fltkernel/nf-fltkernel-fltsendmessage), which delivers it through the consumer's pending `FilterGetMessage` request. The notification is then passed to the consumer's callback, where it is completed with `EspCompleteEventNotification` before the notification object is rearmed for the next event.
 
 This is the full path at a high level:
 
