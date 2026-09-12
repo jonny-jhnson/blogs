@@ -104,9 +104,9 @@ else
     RuleEngine::process_event<ProcessTerminate>(..., &event);
 ```
 
-Before events can be delivered, the consumer creates an event queue with `EspCreateEventQueue` and connects to it with `EspConnectEventQueueWithCallback`. The client and queue GUIDs tell `server::connect` which kernel queue this delivery connection belongs to. Once WESP resolves the queue, it creates the queue's delivery worker with `PsCreateSystemThread`. When the queue is empty, the worker waits on a kernel synchronization object (`KEVENT`) using `KeWaitForSingleObject`.
+Before events can be delivered, the consumer creates an event queue with `EspCreateEventQueue` and connects to it with `EspConnectEventQueueWithCallback`. The client and queue GUIDs tell `server::connect` which kernel queue this delivery connection belongs to. Once WESP resolves the queue, it creates the queue's delivery worker with `PsCreateSystemThread`. When the queue is empty, the worker waits on a kernel synchronization object (`KEVENT`) using [`KeWaitForSingleObject`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kewaitforsingleobject).
 
-The consumer then allocates a notification object with `EspAllocateEventNotification` and arms it with `EspArmEventNotification`. Arming the notification posts an asynchronous `FilterGetMessage`, leaving the consumer waiting for WESP to deliver an event.
+The consumer then allocates a notification object with `EspAllocateEventNotification` and arms it with `EspArmEventNotification`. Arming the notification posts an asynchronous [`FilterGetMessage`](https://learn.microsoft.com/en-us/windows/win32/api/fltuser/nf-fltuser-filtergetmessage), leaving the consumer waiting for WESP to deliver an event.
 
 When a process is created, `RuleEngine::process_event<ProcessCreate>` evaluates the installed ProcessCreate rules. If a rule matches, WESP uses the queue referenced by that rule as the notification's destination. WESP builds the notification and passes it to `EventQueue::queue_async_notification_internal`, which adds it to the queue and wakes the delivery worker by signaling the `KEVENT`.
 
